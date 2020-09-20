@@ -1,0 +1,28 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next",
+    "build": "next build"
+  },
+  "keywords": [],
+  "author": "Jkun",
+  "license": "ISC",
+  "dependencies": {
+    "@ant-design/icons": "^4.2.2",
+    "antd": "^4.6.5",
+    "babel-plugin-styled-components": "^1.11.1",
+    "next": "^9.5.1",
+    "prop-types": "^15.7.2",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "styled-components": "^5.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.9.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-react-hooks": "^4.1.2"
+  }
+}
