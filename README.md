@@ -10,6 +10,7 @@ Clone Twitter with Next.js
 - Next@9
 - Ant Design@4
 - Infinite Scroll
+- next-redux-wrapper@6
 
 ---
 
