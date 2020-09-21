@@ -4,14 +4,14 @@ import styled from "styled-components";
 import Link from "next/link";
 import { Menu, Input, Row, Col } from "antd";
 
-import UserProfile from "../components/UserProfile";
-import LoginForm from "../components/LoginForm";
+import UserProfile from "./UserProfile";
+import LoginForm from "./LoginForm";
 
 const SearchInput = styled(Input.Search)`
   vertical-align: middle;
 `;
 
-const AppLayouts = ({ children }) => {
+const AppLayout = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
@@ -66,8 +66,8 @@ const AppLayouts = ({ children }) => {
   );
 };
 
-AppLayouts.propTypes = {
+AppLayout.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-export default AppLayouts;
+export default AppLayout;
