@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
-import { loginAction } from "../reducers";
+import { loginAction } from "../reducers/user";
 import { Form, Input, Button } from "antd";
 import Link from "next/link";
 // custom hooks
@@ -75,8 +75,6 @@ const LoginForm = () => {
   );
 };
 
-LoginForm.propTypes = {
-  // setIsLoggedIn: PropTypes.func.isRequired,
-};
+LoginForm.propTypes = {};
 
 export default LoginForm;
