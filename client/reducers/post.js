@@ -1,6 +1,17 @@
 export const initialState = {
-  mainPosts: [],
-  imagePaths,
+  mainPosts: [
+    {
+      id: 1,
+      content: "더미데이터 입니다.",
+      User: {
+        id: 1,
+        nickname: "킴재쿤",
+      },
+      Images: [],
+      Comments: [],
+    },
+  ],
+  imagePaths: [],
   postAdded: false,
 };
 
@@ -26,7 +37,7 @@ const reducer = (state = initialState, action) => {
     case ADD_POST:
       return {
         ...state,
-        mainPosts: [...dummyPost, ...state.mainPosts],
+        mainPosts: [dummyPost, ...state.mainPosts],
         postAdded: true,
       };
     default:
