@@ -1,78 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import PropTypes from "prop-types";
-import styled from "styled-components";
 import Slick from "react-slick";
-
-const Overlay = styled.div`
-  position: fixed;
-  z-index: 5000;
-  top: 0;
-  left: 0;
-`;
-
-const Header = styled.header`
-  position: relative;
-  padding: 0;
-  header: 44px;
-  text-align: center;
-  background: white;
-
-  & h1 {
-    margin: 0;
-    font-size: 17px;
-    color: #333;
-    line-height: 44px;
-  }
-
-  & button {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 15px;
-    line-height: 14px;
-    cursor: pointer;
-  }
-`;
-
-const SlickWrapper = styled.div`
-  height: calc(100% - 44px);
-  background: #898989;
-`;
-
-const ImagesWrapper = styled.div`
-  padding: 32px;
-  text-align: center;
-
-  & img {
-    margin: 0 auto;
-    max-height: 750px;
-  }
-`;
-
-const Idicator = styled.div`
-  text-align: center;
-
-  & > div {
-    display: inline-block;
-    width: 75px;
-    height: 38px;
-    border-radius: 15px;
-    line-height: 38px;
-    text-align: center;
-    font-size: 15px;
-    color: white;
-    background: #313131;
-  }
-`;
+import {
+  Overlay,
+  Header,
+  CloseBtn,
+  SlickWrapper,
+  ImgWrapper,
+  Indicator,
+  Global,
+} from "./styles";
 
 const ImagesZoom = ({ images, onClose }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  useEffect(() => {
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+
+      return () => {
+        window.removeEventListener("keydown");
+      };
+    });
+  });
+
   return (
     <Overlay>
+      <Global />
       <Header>
         <h1>상세 이미지</h1>
-        <button onClick={onClose}>X</button>
+        <CloseBtn onClick={onClose} />
       </Header>
       <SlickWrapper>
         <div>
@@ -85,11 +44,16 @@ const ImagesZoom = ({ images, onClose }) => {
             slidesToScroll={1}
           >
             {images.map((v) => (
-              <ImagesWrapper key={v.src}>
+              <ImgWrapper key={v.src}>
                 <img src={v.src} alt={v.src} />
-              </ImagesWrapper>
+              </ImgWrapper>
             ))}
           </Slick>
+          <Indicator>
+            <div>
+              {currentSlide + 1} /{images.length}
+            </div>
+          </Indicator>
         </div>
       </SlickWrapper>
     </Overlay>
@@ -97,7 +61,11 @@ const ImagesZoom = ({ images, onClose }) => {
 };
 
 ImagesZoom.propTypes = {
-  images: PropTypes.arrayOf(PropTypes.object).isRequired,
+  images: PropTypes.arrayOf(
+    PropTypes.shape({
+      src: PropTypes.string,
+    })
+  ).isRequired,
   onClose: PropTypes.func.isRequired,
 };
 

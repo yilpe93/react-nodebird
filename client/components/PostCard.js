@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from "react";
 import PropTypes from "prop-types";
+import styled, { createGlobalStyle } from "styled-components";
 import { useSelector } from "react-redux";
 import { Card, Popover, Button, Avatar, List, Comment } from "antd";
 import {
@@ -12,8 +13,22 @@ import {
 
 import PostImages from "./PostImages";
 import CommentForm from "./CommentForm";
+import PostCardContent from "./PostCardContent";
+
+const CardWrapper = styled.div`
+  margin-bottom: 20px;
+`;
+
+const Global = createGlobalStyle`
+  .ant-card-bordered .ant-card-cover {
+    transform: initial;
+  }
+`;
 
 const PostCard = ({ post }) => {
+  // optional chaining 연산자
+  const id = useSelector((state) => state.user.me?.id);
+
   const [liked, setLiked] = useState(false);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
 
@@ -25,11 +40,9 @@ const PostCard = ({ post }) => {
     setCommentFormOpened((prev) => !prev);
   }, []);
 
-  // optional chaining 연산자
-  const id = useSelector((state) => state.me?.id);
-
   return (
-    <div style={{ marginBottom: 20 }}>
+    <CardWrapper key={post.id}>
+      <Global />
       <Card
         cover={post.Images[0] && <PostImages images={post.Images} />}
         actions={[
@@ -69,11 +82,11 @@ const PostCard = ({ post }) => {
         <Card.Meta
           avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
           title={post.User.nickname}
-          description={post.content}
+          description={<PostCardContent postData={post.content} />}
         />
       </Card>
       {commentFormOpened && (
-        <div>
+        <>
           <CommentForm post={post} />
           <List
             header={`${post.Comments.length}개의 댓글`}
@@ -89,13 +102,9 @@ const PostCard = ({ post }) => {
               </li>;
             }}
           />
-        </div>
+        </>
       )}
-      {/* 
-      <CommentForm />
-      <Comments /> 
-      */}
-    </div>
+    </CardWrapper>
   );
 };
 

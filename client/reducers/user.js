@@ -33,7 +33,7 @@ const reducer = (state = initialState, action) => {
         me: null,
       };
     default:
-      return state;
+      return { ...state };
   }
 };
 
