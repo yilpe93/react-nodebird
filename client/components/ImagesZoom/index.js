@@ -14,17 +14,21 @@ import {
 const ImagesZoom = ({ images, onClose }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  useEffect(() => {
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        onClose();
-      }
+  const handleKeyPress = (e) => {
+    const { key, keyCode } = e;
 
-      return () => {
-        window.removeEventListener("keydown");
-      };
-    });
-  });
+    if (key === "Escape" || keyCode === 27) {
+      onClose();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyPress);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, []);
 
   return (
     <Overlay>
