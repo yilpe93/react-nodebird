@@ -1,10 +1,11 @@
 import shortId from "shortid";
 import produce from "immer";
+import faker from "faker";
 
 export const initialState = {
   mainPosts: [
     {
-      id: shortId.generate(),
+      id: 1,
       content: "첫 게시글 입니다. #해쉬태크 #이러쿵 #저러쿵",
       User: {
         id: 1,
@@ -12,13 +13,16 @@ export const initialState = {
       },
       Images: [
         {
+          id: shortId.generate(),
           src:
             "https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?udate=20180726",
         },
         {
+          id: shortId.generate(),
           src: "https://gimg.gilbut.co.kr/book/BN001958/rn_view_BN001958.jpg",
         },
         {
+          id: shortId.generate(),
           src: "https://gimg.gilbut.co.kr/book/BN001998/rn_view_BN001998.jpg",
         },
       ],
@@ -36,6 +40,35 @@ export const initialState = {
   addCommentDone: false,
   addCommentError: null,
 };
+
+initialState.mainPosts = initialState.mainPosts.concat(
+  Array(20)
+    .fill()
+    .map((arr, i) => ({
+      id: shortId.generate(),
+      User: {
+        id: shortId.generate(),
+        nickname: faker.name.findName(),
+      },
+      content: faker.lorem.paragraph(),
+      Images: [
+        {
+          id: shortId.generate(),
+          // src: faker.image.imageUrl(),
+          src: "https://via.placeholder.com/150",
+        },
+      ],
+      Comments: [
+        {
+          User: {
+            id: shortId.generate(),
+            nickname: faker.name.findName(),
+          },
+          content: faker.lorem.sentence(),
+        },
+      ],
+    }))
+);
 
 export const ADD_POST_REQUEST = "ADD_POST_REQUEST";
 export const ADD_POST_SUCCESS = "ADD_POST_SUCCESS";
