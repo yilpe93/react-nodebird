@@ -1,7 +1,14 @@
 import React, { useCallback } from "react";
+import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutRequestAction } from "../reducers/user";
 import { Card, Avatar, Button } from "antd";
+
+const ProfileCard = styled(Card)`
+  .ant-card-actions li {
+    width: 33.3% !important;
+  }
+`;
 
 const UserProfile = () => {
   const dispatch = useDispatch();
@@ -12,7 +19,7 @@ const UserProfile = () => {
   }, []);
 
   return (
-    <Card
+    <ProfileCard
       actions={[
         <div key="twit">
           짹짹
@@ -39,7 +46,7 @@ const UserProfile = () => {
       <Button onClick={onLogOut} loading={logOutLoading}>
         로그아웃
       </Button>
-    </Card>
+    </ProfileCard>
   );
 };
 

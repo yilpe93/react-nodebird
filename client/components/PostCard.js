@@ -1,7 +1,8 @@
 import React, { useCallback, useState } from "react";
+import Link from "next/link";
 import PropTypes from "prop-types";
 import styled, { createGlobalStyle } from "styled-components";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Card, Popover, Button, Avatar, List, Comment } from "antd";
 import {
   RetweetOutlined,
@@ -10,6 +11,8 @@ import {
   MessageOutlined,
   EllipsisOutlined,
 } from "@ant-design/icons";
+
+import { removePostReqeust } from "../reducers/post";
 
 import PostImages from "./PostImages";
 import CommentForm from "./CommentForm";
@@ -26,8 +29,10 @@ const Global = createGlobalStyle`
 `;
 
 const PostCard = ({ post }) => {
+  const dispatch = useDispatch();
   // optional chaining 연산자
   const id = useSelector((state) => state.user.me?.id);
+  const { removePostLoading } = useSelector((state) => state.post);
 
   const [liked, setLiked] = useState(false);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
@@ -35,6 +40,10 @@ const PostCard = ({ post }) => {
   const onToggleLike = useCallback(() => {
     setLiked((prev) => !prev);
   }, []);
+
+  const onRemovePost = useCallback(() => {
+    dispatch(removePostReqeust(post.id));
+  });
 
   const onToggleComment = useCallback(() => {
     setCommentFormOpened((prev) => !prev);
@@ -67,7 +76,13 @@ const PostCard = ({ post }) => {
                 {id && post.User.id === id ? (
                   <>
                     <Button type="primary">수정</Button>
-                    <Button type="danger">삭제</Button>
+                    <Button
+                      type="danger"
+                      loading={removePostLoading}
+                      onClick={onRemovePost}
+                    >
+                      삭제
+                    </Button>
                   </>
                 ) : (
                   <Button type="">신고</Button>
@@ -89,18 +104,27 @@ const PostCard = ({ post }) => {
         <>
           <CommentForm post={post} />
           <List
-            header={`${post.Comments.length}개의 댓글`}
+            header={`${post.Comments ? post.Comments.length : 0} 댓글`}
             itemLayout="horizontal"
-            dataSource={post.Comments}
-            renderItem={(item) => {
+            dataSource={post.Comments || []}
+            renderItem={(item) => (
               <li>
                 <Comment
                   author={item.User.nickname}
-                  avatar={<Avatar>{item.User.nickname[0]}</Avatar>}
+                  avatar={
+                    <Link
+                      href={{ pathname: "/user", query: { id: item.User.id } }}
+                      as={`/user/${item.User.id}`}
+                    >
+                      <a>
+                        <Avatar>{item.User.nickname[0]}</Avatar>
+                      </a>
+                    </Link>
+                  }
                   content={item.content}
                 />
-              </li>;
-            }}
+              </li>
+            )}
           />
         </>
       )}
