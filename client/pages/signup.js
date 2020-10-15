@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
+import Router from "next/router";
 import Head from "next/head";
 import styled from "styled-components";
 import AppLayout from "../components/AppLayout";
@@ -14,7 +15,21 @@ const ErrorMessage = styled.div`
 
 const Signup = () => {
   const dispatch = useDispatch();
-  const { signUpLoading } = useSelector((state) => state.user);
+  const { signUpLoading, signUpDone, signUpError } = useSelector(
+    (state) => state.user
+  );
+
+  useEffect(() => {
+    if (signUpDone) {
+      Router.push("/");
+    }
+  }, [signUpDone]);
+
+  useEffect(() => {
+    if (signUpError) {
+      alert(signUpError);
+    }
+  }, [signUpError]);
 
   // Custom Input
   const [email, onChangeEmail] = useInput("");
@@ -57,7 +72,7 @@ const Signup = () => {
       <Head>
         <title>회원가입 | NodeBird</title>
       </Head>
-      <Form onFinish={onSubmit}>
+      <Form onFinish={onSubmit} style={{ padding: 10 }}>
         <div>
           <label htmlFor="user-email">이메일</label>
           <br />
