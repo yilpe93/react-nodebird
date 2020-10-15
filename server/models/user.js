@@ -23,6 +23,21 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  User.associate = (db) => {};
+  User.associate = (db) => {
+    db.User.hasMany(db.Post);
+    db.User.belongsToMany(db.Post, { through: "Like", as: "Liked" });
+    db.User.hasMany(db.Comment);
+    db.User.belongsToMany(db.User, {
+      through: "Follow",
+      as: "Followers",
+      foreignKey: "FollowingId", // 먼저 찾아야하는 Key 설정
+    });
+    db.User.belongsToMany(db.User, {
+      through: "Follow",
+      as: "Followings",
+      foreignKey: "FollowerId",
+    });
+  };
+
   return User;
 };
