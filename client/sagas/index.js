@@ -1,7 +1,10 @@
 import { all, fork } from "redux-saga/effects";
+import axios from "axios";
 // delay, debounce, throttle, takeLatest, takeEvery, takeLeading, takeMaybe ...
 import userSaga from "./user";
 import postSaga from "./post";
+
+axios.defaults.baseURL = "http://localhost:3065/api";
 
 /* 
   # all [동시 실행]

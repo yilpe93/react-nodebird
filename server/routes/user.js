@@ -4,6 +4,7 @@ const { User } = require("../models");
 
 const router = express.Router();
 
+// 회원가입
 router.post("/", async (req, res, next) => {
   try {
     const { email, nickname, password } = req.body;
@@ -43,6 +44,15 @@ router.post("/", async (req, res, next) => {
   } catch (error) {
     console.error(error);
     next(error); // status 500
+  }
+});
+
+// 로그인
+router.post("/login", async (req, res, next) => {
+  try {
+  } catch (error) {
+    console.error(error);
+    next(error);
   }
 });
 
