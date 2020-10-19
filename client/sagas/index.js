@@ -4,7 +4,9 @@ import axios from "axios";
 import userSaga from "./user";
 import postSaga from "./post";
 
+// cors
 axios.defaults.baseURL = "http://localhost:3065/api";
+axios.defaults.withCredentials = true; // cookie 전달 허용
 
 /* 
   # all [동시 실행]

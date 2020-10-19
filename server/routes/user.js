@@ -7,6 +7,41 @@ const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 
 const router = express.Router();
 
+// 유저 정보
+router.get("/", async (req, res, next) => {
+  try {
+    if (req.user) {
+      const user = await User.findOne({
+        where: { id: req.user.id },
+        attributes: {
+          exclude: ["password"],
+        },
+        include: [
+          {
+            model: Post,
+            attributes: ["id"],
+          },
+          {
+            model: User,
+            as: "Followings",
+          },
+          {
+            model: User,
+            as: "Followers",
+          },
+        ],
+      });
+
+      return res.status(200).json(user);
+    } else {
+      return res.status(200).json(null);
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 // 회원가입
 router.post("/", isNotLoggedIn, async (req, res, next) => {
   try {

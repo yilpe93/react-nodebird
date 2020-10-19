@@ -24,8 +24,8 @@ passportConfig();
 
 app.use(
   cors({
-    origin: "*",
-    credentials: false,
+    origin: "http://localhost:3000",
+    credentials: true, // cookie 전달
   })
 );
 
