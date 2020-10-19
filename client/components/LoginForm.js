@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
@@ -34,7 +34,13 @@ const LoginButton = styled(Button)`
 
 const LoginForm = () => {
   const dispatch = useDispatch();
-  const { logInLoading } = useSelector((state) => state.user);
+  const { logInLoading, logInError } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (logInError) {
+      alert(logInError);
+    }
+  }, [logInError]);
 
   const [email, onChangeEmail] = useInput("");
   const [password, onChangePassword] = useInput("");

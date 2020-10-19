@@ -15,9 +15,19 @@ const ErrorMessage = styled.div`
 
 const Signup = () => {
   const dispatch = useDispatch();
-  const { signUpLoading, signUpDone, signUpError } = useSelector(
+  const { signUpLoading, signUpDone, signUpError, me } = useSelector(
     (state) => state.user
   );
+
+  /* 
+    - Router.replace  => 뒤로 가기의 기록이 남지 않는다.
+    - Router.push => 뒤로 가기의 기록이 남는다.
+  */
+  useEffect(() => {
+    if (me && me.id) {
+      Router.replace("/");
+    }
+  }, [me && me.id]);
 
   useEffect(() => {
     if (signUpDone) {
