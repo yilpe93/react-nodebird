@@ -32,9 +32,9 @@ router.get("/", async (req, res, next) => {
         ],
       });
 
-      return res.status(200).json(user);
+      res.status(200).json(user);
     } else {
-      return res.status(200).json(null);
+      res.status(200).json(null);
     }
   } catch (error) {
     console.error(error);
@@ -131,7 +131,7 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
         - 프론트에선 보안 위협을 최소로 하기위한 Token === "cookie"
         - 서버 쪽에선 통으로 들고 있는 데이터 === "session"
       */
-      return res.status(200).json(fullUserWithoutPassword);
+      res.status(200).json(fullUserWithoutPassword);
     });
   })(req, res, next);
 });

@@ -30,6 +30,7 @@ const Global = createGlobalStyle`
 `;
 
 const PostCard = ({ post }) => {
+  console.log("post", post);
   const dispatch = useDispatch();
   // optional chaining 연산자
   const id = useSelector((state) => state.user.me?.id);

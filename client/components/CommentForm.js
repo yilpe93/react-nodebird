@@ -25,11 +25,17 @@ const Btn = styled(Button)`
 const CommentForm = ({ post }) => {
   const dispatch = useDispatch();
   const id = useSelector((state) => state.user.me?.id);
-  const { addCommentDone, addCommentLoading } = useSelector(
+  const { addCommentDone, addCommentLoading, addCommentError } = useSelector(
     (state) => state.post
   );
 
   const [commentText, onChangeCommentText, setCommentText] = useInput("");
+
+  useEffect(() => {
+    if (addCommentError) {
+      alert(addCommentError);
+    }
+  }, [addCommentError]);
 
   useEffect(() => {
     if (addCommentDone) {

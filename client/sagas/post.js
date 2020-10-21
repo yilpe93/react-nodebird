@@ -23,22 +23,22 @@ import {
   ADD_COMMENT_FAILURE,
 } from "../reducers/post";
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
-import { generateDummyPost } from "../reducers/post";
 
 /* POST API */
 function loadPostsAPI(data) {
-  return axios.get("/post", data);
+  return axios.get("/posts", data);
 }
 
 function* loadPosts(action) {
   try {
-    yield delay(2000);
+    const result = yield call(loadPostsAPI, action.data);
 
     yield put({
       type: LOAD_POSTS_SUCCESS,
-      data: generateDummyPost(10),
+      data: result.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: LOAD_POSTS_FAILURE,
       error: err.response.data,
@@ -63,6 +63,7 @@ function* addPost(action) {
       data: result.data.id,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: ADD_POST_FAILURE,
       error: err.response.data,
@@ -76,19 +77,18 @@ function removePostAPI(data) {
 
 function* removePost(action) {
   try {
-    // const result = yield call(addPostAPI, action.data);
-    yield delay(2000);
-    console.log("action", action);
+    const result = yield call(removePostAPI, action.data);
 
     yield put({
       type: REMOVE_POST_SUCCESS,
-      data: action.id,
+      data: result.data,
     });
     yield put({
       type: REMOVE_POST_OF_ME,
-      data: action.id,
+      data: result.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: REMOVE_POST_FAILURE,
       error: err.response.data,
@@ -98,18 +98,20 @@ function* removePost(action) {
 
 /* COMMENT API */
 function addCommentAPI(data) {
-  return axios.post(`/api/post/${data.postId}/comment`, data); // POST /post/1/comment
+  return axios.post(`/post/${data.postId}/comment`, data); // POST /post/1/comment
 }
 
 function* addComment(action) {
   try {
     const result = yield call(addCommentAPI, action.data);
+    console.log("result", result);
 
     yield put({
       type: ADD_COMMENT_SUCCESS,
       data: result.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: ADD_COMMENT_FAILURE,
       error: err.response.data,

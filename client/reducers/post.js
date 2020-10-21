@@ -1,6 +1,4 @@
-import shortId from "shortid";
 import produce from "immer";
-import faker from "faker";
 
 export const initialState = {
   mainPosts: [],
@@ -19,34 +17,6 @@ export const initialState = {
   addCommentDone: false,
   addCommentError: null,
 };
-
-export const generateDummyPost = (number) =>
-  Array(number)
-    .fill()
-    .map((arr, i) => ({
-      id: shortId.generate(),
-      User: {
-        id: shortId.generate(),
-        nickname: faker.name.findName(),
-      },
-      content: faker.lorem.paragraph(),
-      Images: [
-        {
-          id: shortId.generate(),
-          src: faker.image.image(),
-          // src: "https://via.placeholder.com/150",
-        },
-      ],
-      Comments: [
-        {
-          User: {
-            id: shortId.generate(),
-            nickname: faker.name.findName(),
-          },
-          content: faker.lorem.sentence(),
-        },
-      ],
-    }));
 
 export const LOAD_POSTS_REQUEST = "LOAD_POSTS_REQUEST";
 export const LOAD_POSTS_SUCCESS = "LOAD_POSTS_SUCCESS";
@@ -137,9 +107,9 @@ const reducer = (state = initialState, action) => {
         const post = draft.mainPosts.find(
           (post) => post.id === action.data.PostId
         );
-        post.Comments.unshift(action.data.content);
         draft.addCommentLoading = false;
         draft.addCommentDone = true;
+        post.Comments.unshift(action.data);
         break;
         // const postIndex = state.mainPosts.findIndex(
         //   (post) => post.id === action.data.postId

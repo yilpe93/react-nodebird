@@ -4,10 +4,14 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const dotenv = require("dotenv");
+const morgan = require("morgan");
 
 const userRouter = require("./routes/user");
 const postRouter = require("./routes/post");
+const postsRouter = require("./routes/posts");
+
 const db = require("./models");
+
 const passportConfig = require("./passport");
 
 dotenv.config();
@@ -22,6 +26,7 @@ db.sequelize
 
 passportConfig();
 
+app.use(morgan("dev"));
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -44,6 +49,7 @@ app.use(passport.session());
 
 app.use("/api/user", userRouter);
 app.use("/api/post", postRouter);
+app.use("/api/posts", postsRouter);
 
 /* 
   # Error 처리 middleware
