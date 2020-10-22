@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { loginRequestAction } from "../reducers/user";
+import { LOG_IN_REQUEST } from "../reducers/user";
 import { Form, Input, Button } from "antd";
 import Link from "next/link";
 // custom hooks
@@ -46,7 +46,13 @@ const LoginForm = () => {
   const [password, onChangePassword] = useInput("");
 
   const onSubmitForm = useCallback(() => {
-    dispatch(loginRequestAction({ email, password }));
+    dispatch({
+      type: LOG_IN_REQUEST,
+      data: {
+        email,
+        password,
+      },
+    });
   }, [email, password]);
 
   return (

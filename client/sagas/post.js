@@ -54,7 +54,7 @@ function* loadPosts(action) {
 
 function addPostAPI(data) {
   return axios.post("/post", { content: data });
-} // POST /post
+}
 
 function* addPost(action) {
   try {
@@ -78,7 +78,7 @@ function* addPost(action) {
 }
 
 function removePostAPI(data) {
-  return axios.post("/api/remove_post", data);
+  return axios.delete(`/post/${data}`);
 }
 
 function* removePost(action) {
@@ -89,6 +89,7 @@ function* removePost(action) {
       type: REMOVE_POST_SUCCESS,
       data: result.data,
     });
+
     yield put({
       type: REMOVE_POST_OF_ME,
       data: result.data,
@@ -123,6 +124,7 @@ function* likePost(action) {
     });
   }
 }
+
 /* UN LIKE POST API */
 function unlikePostAPI(data) {
   return axios.delete(`/post/${data}/like`); // DELETE post/1/like

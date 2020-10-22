@@ -20,6 +20,9 @@ import {
   UNFOLLOW_REQUEST,
   UNFOLLOW_SUCCESS,
   UNFOLLOW_FAILURE,
+  CHANGE_INFO_REQUEST,
+  CHANGE_INFO_SUCCESS,
+  CHANGE_INFO_FAILURE,
 } from "../reducers/user";
 
 /* FOLLOW API */
@@ -29,6 +32,7 @@ function followAPI(data) {
 
 function* follow(action) {
   try {
+    // const result = yield call(followAPI, action.data);
     yield delay(2000);
     yield put({
       type: FOLLOW_SUCCESS,
@@ -48,6 +52,7 @@ function unfollowAPI(data) {
 
 function* unfollow(action) {
   try {
+    // const result = yield call(unfollowAPI, action.data);
     yield delay(2000);
     yield put({
       type: UNFOLLOW_SUCCESS,
@@ -102,20 +107,20 @@ function* logOut() {
 }
 
 /* LOAD_USER API */
-function loadUserAPI(data) {
+function loadUserAPI() {
   return axios.get("/user");
 }
 
 function* loadUser(action) {
   try {
     const result = yield call(loadUserAPI, action.data);
-    console.log("result", result);
 
     yield put({
       type: LOAD_USER_SUCCESS,
       data: result.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: LOAD_USER_FAILURE,
       data: err.response.data,
@@ -134,11 +139,34 @@ function* signUp(action) {
 
     yield put({
       type: SIGN_UP_SUCCESS,
-      daya: action.data,
+      data: result.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: SIGN_UP_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+/* CHANGE INFO */
+function changeInfoAPI(data) {
+  return axios.patch("/user/info", { nickname: data });
+}
+
+function* changeInfo(action) {
+  try {
+    const result = yield call(changeInfoAPI, action.data);
+
+    yield put({
+      type: CHANGE_INFO_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: CHANGE_INFO_FAILURE,
       error: err.response.data,
     });
   }
@@ -168,6 +196,10 @@ function* watchSignUp() {
   yield takeLatest(SIGN_UP_REQUEST, signUp);
 }
 
+function* watchChangeInfo() {
+  yield takeLatest(CHANGE_INFO_REQUEST, changeInfo);
+}
+
 export default function* userSaga() {
   yield all([
     fork(watchFollow),
@@ -176,5 +208,6 @@ export default function* userSaga() {
     fork(watchLogOut),
     fork(watchLoadUser),
     fork(watchSignUp),
+    fork(watchChangeInfo),
   ]);
 }

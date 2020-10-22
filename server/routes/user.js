@@ -143,4 +143,22 @@ router.post("/logout", isLoggedIn, (req, res, next) => {
   res.send("ok");
 });
 
+// 닉네임 수정
+router.patch("/info", isLoggedIn, async (req, res, next) => {
+  try {
+    const { nickname } = req.body;
+    await User.update(
+      {
+        nickname,
+      },
+      { where: { id: req.user.id } }
+    );
+
+    res.status(200).json({ nickname });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 module.exports = router;

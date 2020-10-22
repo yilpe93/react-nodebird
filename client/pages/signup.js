@@ -7,7 +7,7 @@ import { Form, Input, Checkbox, Button } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 // custom hooks
 import useInput from "../hooks/useInput";
-import { signupRequestAction } from "../reducers/user";
+import { SIGN_UP_REQUEST } from "../reducers/user";
 
 const ErrorMessage = styled.div`
   color: red;
@@ -49,6 +49,7 @@ const Signup = () => {
   // 비밀번호 체크
   const [passwordError, setPasswordError] = useState(false);
   const [passwordCheck, setPasswordCheck] = useState("");
+
   const onChangePasswordCheck = useCallback(
     (e) => {
       setPasswordCheck(e.target.value);
@@ -74,7 +75,14 @@ const Signup = () => {
       return setTermError(true);
     }
 
-    dispatch(signupRequestAction({ email, nickname, password }));
+    dispatch({
+      type: SIGN_UP_REQUEST,
+      data: {
+        email,
+        nickname,
+        password,
+      },
+    });
   }, [email, password, passwordCheck, term]);
 
   return (

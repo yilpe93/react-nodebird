@@ -13,9 +13,9 @@ import {
 } from "@ant-design/icons";
 
 import {
-  removePostReqeust,
   LIKE_POST_REQUEST,
   UN_LIKE_POST_REQUEST,
+  REMOVE_POST_REQUEST,
 } from "../reducers/post";
 
 import PostImages from "./PostImages";
@@ -58,7 +58,10 @@ const PostCard = ({ post }) => {
   });
 
   const onRemovePost = useCallback(() => {
-    dispatch(removePostReqeust(post.id));
+    dispatch({
+      type: REMOVE_POST_REQUEST,
+      data: post.id,
+    });
   });
 
   const onToggleComment = useCallback(() => {

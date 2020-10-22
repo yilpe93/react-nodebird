@@ -13,7 +13,7 @@ router.post("/", isLoggedIn, async (req, res, next) => {
     });
 
     const fullPost = await Post.findOne({
-      where: { id: postId },
+      where: { id: post.id },
       include: [
         { model: Image },
         {
@@ -67,9 +67,18 @@ router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {
   }
 });
 
-router.delete("/", (req, res) => {
-  res.json({ id: 1 });
-});
+router.delete("/:postId", isLoggedIn, async (req, res) => {
+  try {
+    Post.destroy({
+      where: { id: req.params.postId, UserId: req.user.id },
+    });
+
+    res.status(200).json({ PostId: parseInt(req.params.postId, 10) });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+}); // DELETE /post/1
 
 /* LIKE */
 router.patch("/:postId/like", isLoggedIn, async (req, res, next) => {
@@ -82,6 +91,7 @@ router.patch("/:postId/like", isLoggedIn, async (req, res, next) => {
     }
 
     await post.addLikers(req.user.id);
+
     res.json({ PostId: id, UserId: req.user.id });
   } catch (error) {
     console.error(error);
@@ -100,6 +110,7 @@ router.delete("/:postId/like", isLoggedIn, async (req, res, next) => {
     }
 
     await post.removeLikers(req.user.id);
+
     res.json({ PostId: id, UserId: req.user.id });
   } catch (error) {
     console.error(error);

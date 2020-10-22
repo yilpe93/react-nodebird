@@ -48,21 +48,6 @@ export const ADD_COMMENT_REQUEST = "ADD_COMMENT_REQUEST";
 export const ADD_COMMENT_SUCCESS = "ADD_COMMENT_SUCCESS";
 export const ADD_COMMENT_FAILURE = "ADD_COMMENT_FAILURE";
 
-export const addPostRequest = (data) => ({
-  type: ADD_POST_REQUEST,
-  data,
-});
-
-export const addCommentRequest = (data) => ({
-  type: ADD_COMMENT_REQUEST,
-  data,
-});
-
-export const removePostReqeust = (id) => ({
-  type: REMOVE_POST_REQUEST,
-  id,
-});
-
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
@@ -89,7 +74,6 @@ const reducer = (state = initialState, action) => {
       case ADD_POST_SUCCESS:
         draft.addPostLoading = false;
         draft.addPostDone = true;
-        // draft.mainPosts = [dummyPost(action.data), ...state.mainPosts]
         draft.mainPosts.unshift(action.data);
         break;
       case ADD_POST_FAILURE:
@@ -103,7 +87,7 @@ const reducer = (state = initialState, action) => {
         break;
       case REMOVE_POST_SUCCESS:
         draft.mainPosts = draft.mainPosts.filter(
-          (post) => post.id !== action.data
+          (post) => post.id !== action.data.PostId
         );
         draft.removePostLoading = false;
         draft.removePostDone = true;

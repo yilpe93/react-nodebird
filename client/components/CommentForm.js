@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import { Form, Input, Button } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { addCommentRequest } from "../reducers/post";
+import { ADD_COMMENT_REQUEST } from "../reducers/post";
 import useInput from "../hooks/useInput";
 
 const Item = styled(Form.Item)`
@@ -44,13 +44,14 @@ const CommentForm = ({ post }) => {
   }, [addCommentDone]);
 
   const onSubmitComment = useCallback(() => {
-    dispatch(
-      addCommentRequest({
+    dispatch({
+      type: ADD_COMMENT_REQUEST,
+      data: {
         content: commentText,
         postId: post.id,
         userId: id,
-      })
-    );
+      },
+    });
   }, [commentText, id]);
 
   return (

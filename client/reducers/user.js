@@ -25,9 +25,9 @@ export const initialState = {
   signUpDone: false,
   signUpError: null,
 
-  changeNicknameLoading: false,
-  changeNicknameDone: false,
-  changeNicknameError: null,
+  changeInfoLoading: false,
+  changeInfoDone: false,
+  changeInfoError: null,
 
   me: null,
   signUpData: {},
@@ -50,9 +50,9 @@ export const SIGN_UP_REQUEST = "SIGN_UP_REQUEST";
 export const SIGN_UP_SUCCESS = "SIGN_UP_SUCCESS";
 export const SIGN_UP_FAILURE = "SIGN_UP_FAILURE";
 
-export const CHANGE_NICKNAME_REQUEST = "CHANGE_NICKNAME_REQUEST";
-export const CHANGE_NICKNAME_SUCCESS = "CHANGE_NICKNAME_SUCCESS";
-export const CHANGE_NICKNAME_FAILURE = "CHANGE_NICKNAME_FAILURE";
+export const CHANGE_INFO_REQUEST = "CHANGE_INFO_REQUEST";
+export const CHANGE_INFO_SUCCESS = "CHANGE_INFO_SUCCESS";
+export const CHANGE_INFO_FAILURE = "CHANGE_INFO_FAILURE";
 
 export const FOLLOW_REQUEST = "FOLLOW_REQUEST";
 export const FOLLOW_SUCCESS = "FOLLOW_SUCCESS";
@@ -64,26 +64,6 @@ export const UNFOLLOW_FAILURE = "UNFOLLOW_FAILURE";
 
 export const ADD_POST_TO_ME = "ADD_POST_TO_ME";
 export const REMOVE_POST_OF_ME = "REMOVE_POST_OF_ME";
-
-export const loginRequestAction = (data) => {
-  return {
-    type: LOG_IN_REQUEST,
-    data,
-  };
-};
-
-export const logoutRequestAction = () => {
-  return {
-    type: LOG_OUT_REQUEST,
-  };
-};
-
-export const signupRequestAction = (data) => {
-  return {
-    type: SIGN_UP_REQUEST,
-    data,
-  };
-};
 
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
@@ -177,18 +157,19 @@ const reducer = (state = initialState, action) => {
         draft.signUpLoading = false;
         draft.signUpError = action.error;
         break;
-      case CHANGE_NICKNAME_REQUEST:
-        draft.changeNicknameLoading = true;
-        draft.changeNicknameDone = false;
-        draft.changeNicknameError = null;
+      case CHANGE_INFO_REQUEST:
+        draft.changeInfoLoading = true;
+        draft.changeInfoDone = false;
+        draft.changeInfoError = null;
         break;
-      case CHANGE_NICKNAME_SUCCESS:
-        draft.changeNicknameLoading = false;
-        draft.changeNicknameDone = true;
+      case CHANGE_INFO_SUCCESS:
+        draft.me.nickname = action.data.nickname;
+        draft.changeInfoLoading = false;
+        draft.changeInfoDone = true;
         break;
-      case CHANGE_NICKNAME_FAILURE:
-        draft.changeNicknameLoading = false;
-        draft.changeNicknameError = action.error;
+      case CHANGE_INFO_FAILURE:
+        draft.changeInfoLoading = false;
+        draft.changeInfoError = action.error;
         break;
       case ADD_POST_TO_ME:
         draft.me.Posts.unshift({ id: action.data });
@@ -201,7 +182,9 @@ const reducer = (state = initialState, action) => {
       //   },
       // };
       case REMOVE_POST_OF_ME:
-        draft.me.Posts.filter((post) => post.id !== action.data);
+        draft.me.Posts = draft.me.Posts.filter(
+          (post) => post.id !== action.data.PostId
+        );
         break;
       // return {
       //   ...state,
