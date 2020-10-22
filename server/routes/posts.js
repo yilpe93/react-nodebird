@@ -15,12 +15,13 @@ router.get("/", async (req, res, next) => {
         [Comment, "createdAt", "DESC"],
       ], // DESC, ASC
       include: [
-        { model: User, attributes: ["id", "nickname"] },
         { model: Image },
         {
           model: Comment,
           include: [{ model: User, attributes: ["id", "nickname"] }],
         },
+        { model: User, attributes: ["id", "nickname"] },
+        { model: User, attributes: ["id"], as: "Likers" },
       ],
       // offset: 0, // 1 ~ 10, 11 ~ 20, ..., 101 ~ 110
     });

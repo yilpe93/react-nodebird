@@ -14,7 +14,15 @@ router.post("/", isLoggedIn, async (req, res, next) => {
 
     const fullPost = await Post.findOne({
       where: { id: postId },
-      include: [{ model: Image }, { model: Comment }, { model: User }],
+      include: [
+        { model: Image },
+        {
+          model: Comment,
+          include: [{ model: User, attributes: ["id", "nickname"] }],
+        }, // 댓글 작성자
+        { model: User, attributes: ["id", "nickname"] }, // 게시글 작성자
+        { model: User, attributes: ["id"], as: "Likers" }, // 좋아요 누른 사람
+      ],
     });
 
     res.status(201).json(fullPost);
@@ -61,6 +69,42 @@ router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {
 
 router.delete("/", (req, res) => {
   res.json({ id: 1 });
+});
+
+/* LIKE */
+router.patch("/:postId/like", isLoggedIn, async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.postId);
+    const post = await Post.findOne({ where: { id } });
+
+    if (!post) {
+      return res.status(403).send("게시글이 존재하지 않습니다.");
+    }
+
+    await post.addLikers(req.user.id);
+    res.json({ PostId: id, UserId: req.user.id });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+/* UN LIKE */
+router.delete("/:postId/like", isLoggedIn, async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.postId);
+    const post = await Post.findOne({ where: { id } });
+
+    if (!post) {
+      return res.status(403).send("게시글이 존재하지 않습니다.");
+    }
+
+    await post.removeLikers(req.user.id);
+    res.json({ PostId: id, UserId: req.user.id });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
 });
 
 module.exports = router;

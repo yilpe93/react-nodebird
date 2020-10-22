@@ -12,7 +12,11 @@ import {
   EllipsisOutlined,
 } from "@ant-design/icons";
 
-import { removePostReqeust } from "../reducers/post";
+import {
+  removePostReqeust,
+  LIKE_POST_REQUEST,
+  UN_LIKE_POST_REQUEST,
+} from "../reducers/post";
 
 import PostImages from "./PostImages";
 import CommentForm from "./CommentForm";
@@ -30,18 +34,28 @@ const Global = createGlobalStyle`
 `;
 
 const PostCard = ({ post }) => {
-  console.log("post", post);
   const dispatch = useDispatch();
   // optional chaining 연산자
   const id = useSelector((state) => state.user.me?.id);
   const { removePostLoading } = useSelector((state) => state.post);
 
-  const [liked, setLiked] = useState(false);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
 
-  const onToggleLike = useCallback(() => {
-    setLiked((prev) => !prev);
-  }, []);
+  const liked = post.Likers.find((like) => like.id === id);
+
+  const onLike = useCallback(() => {
+    dispatch({
+      type: LIKE_POST_REQUEST,
+      data: post.id,
+    });
+  });
+
+  const onUnLike = useCallback(() => {
+    dispatch({
+      type: UN_LIKE_POST_REQUEST,
+      data: post.id,
+    });
+  });
 
   const onRemovePost = useCallback(() => {
     dispatch(removePostReqeust(post.id));
@@ -62,10 +76,10 @@ const PostCard = ({ post }) => {
             <HeartTwoTone
               twoToneColor="#eb2f96"
               key="heart"
-              onClick={onToggleLike}
+              onClick={onUnLike}
             />
           ) : (
-            <HeartOutlined key="heart" onClick={onToggleLike} />
+            <HeartOutlined key="heart" onClick={onLike} />
           ),
           <MessageOutlined key="comment" onClick={onToggleComment} />,
           <Popover
