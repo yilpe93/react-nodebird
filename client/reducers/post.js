@@ -58,9 +58,9 @@ const reducer = (state = initialState, action) => {
         break;
       case LOAD_POSTS_SUCCESS:
         draft.loadPostsLoading = false;
-        draft.loadPostsDone = true;
         draft.mainPosts = draft.mainPosts.concat(action.data);
         draft.hasMorePosts = draft.mainPosts.length < 50;
+        draft.loadPostsDone = true;
         break;
       case LOAD_POSTS_FAILURE:
         draft.loadPostsLoading = false;
@@ -73,8 +73,8 @@ const reducer = (state = initialState, action) => {
         break;
       case ADD_POST_SUCCESS:
         draft.addPostLoading = false;
-        draft.addPostDone = true;
         draft.mainPosts.unshift(action.data);
+        draft.addPostDone = true;
         break;
       case ADD_POST_FAILURE:
         draft.addPostLoading = false;
@@ -86,10 +86,10 @@ const reducer = (state = initialState, action) => {
         draft.removePostError = null;
         break;
       case REMOVE_POST_SUCCESS:
+        draft.removePostLoading = false;
         draft.mainPosts = draft.mainPosts.filter(
           (post) => post.id !== action.data.PostId
         );
-        draft.removePostLoading = false;
         draft.removePostDone = true;
         break;
       case REMOVE_POST_FAILURE:
@@ -102,11 +102,11 @@ const reducer = (state = initialState, action) => {
         draft.likePostError = null;
         break;
       case LIKE_POST_SUCCESS: {
+        draft.likePostLoading = false;
         const post = draft.mainPosts.find(
           (post) => post.id === action.data.PostId
         );
         post.Likers.push({ id: action.data.UserId });
-        draft.likePostLoading = false;
         draft.likePostDone = true;
         break;
       }
@@ -120,13 +120,13 @@ const reducer = (state = initialState, action) => {
         draft.unLikePostError = null;
         break;
       case UN_LIKE_POST_SUCCESS: {
+        draft.unLikePostLoading = false;
         const post = draft.mainPosts.find(
           (post) => post.id === action.data.PostId
         );
         post.Likers = post.Likers.filter(
           (liker) => liker.id !== action.data.UserId
         );
-        draft.unLikePostLoading = false;
         draft.unLikePostDone = true;
         break;
       }
@@ -140,12 +140,12 @@ const reducer = (state = initialState, action) => {
         draft.addCommentError = null;
         break;
       case ADD_COMMENT_SUCCESS: {
+        draft.addCommentLoading = false;
         const post = draft.mainPosts.find(
           (post) => post.id === action.data.PostId
         );
-        draft.addCommentLoading = false;
-        draft.addCommentDone = true;
         post.Comments.unshift(action.data);
+        draft.addCommentDone = true;
         break;
         // const postIndex = state.mainPosts.findIndex(
         //   (post) => post.id === action.data.postId
