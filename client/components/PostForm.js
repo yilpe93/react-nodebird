@@ -31,7 +31,6 @@ const PostForm = () => {
   const imageInput = useRef();
 
   const onChangeImages = useCallback((e) => {
-    console.log("image files", e.target.files);
     const imageFormData = new FormData(); // Object, => multipart/form-data로 만들어주기
 
     [].forEach.call(e.target.files, (f) => {

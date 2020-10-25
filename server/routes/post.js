@@ -3,7 +3,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-const { Post, Image, Comment, User } = require("../models");
+const { Post, Image, Comment, User, Hashtag } = require("../models");
 const { isLoggedIn } = require("./middlewares");
 const router = express.Router();
 
@@ -46,12 +46,30 @@ const upload = multer({
 router.post("/", isLoggedIn, upload.none(), async (req, res, next) => {
   try {
     const { content } = req.body;
+    const hashtags = content.match(/#[^\s#]+/g);
 
     const post = await Post.create({
       content,
       UserId: req.user.id,
     });
 
+    /* Hashtag */
+    if (hashtags) {
+      const result = await Promise.all(
+        hashtags.map((tag) =>
+          // Hashtag.create({ name: tag.slice(1).toLowerCase() })
+          Hashtag.findOrCreate({
+            where: { name: tag.slice(1).toLowerCase() },
+          })
+        )
+      ); // [[노드, true], [리액트,true]]
+
+      console.log("result", result);
+
+      await post.addHashtags(result.map((tag) => tag[0]));
+    }
+
+    /* Image Upload */
     if (req.body.image) {
       if (Array.isArray(req.body.image)) {
         // 이미지를 여러 개 올린 경우 image: [킴재쿤.png, 리재쿤,png]
@@ -84,7 +102,7 @@ router.post("/", isLoggedIn, upload.none(), async (req, res, next) => {
     console.error(error);
     next(error);
   }
-});
+}); // POST /post
 
 router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {
   try {
@@ -119,7 +137,7 @@ router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {
     console.error(error);
     next(error);
   }
-});
+}); // POST /post/1/comment
 
 router.delete("/:postId", isLoggedIn, async (req, res) => {
   try {
@@ -151,7 +169,7 @@ router.patch("/:postId/like", isLoggedIn, async (req, res, next) => {
     console.error(error);
     next(error);
   }
-});
+}); // PATCH /post/1/like
 
 /* UN LIKE */
 router.delete("/:postId/like", isLoggedIn, async (req, res, next) => {
@@ -170,7 +188,7 @@ router.delete("/:postId/like", isLoggedIn, async (req, res, next) => {
     console.error(error);
     next(error);
   }
-});
+}); // DELETE /post/1/like
 
 /* IMAGES UPLOAD */
 router.post("/images", isLoggedIn, upload.array("image"), (req, res, next) => {
