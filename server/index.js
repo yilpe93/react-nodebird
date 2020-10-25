@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
+const path = require("path");
 
 const userRouter = require("./routes/user");
 const postRouter = require("./routes/post");
@@ -34,8 +35,10 @@ app.use(
   })
 );
 
+app.use("/", express.static(path.join(__dirname, "uploads"))); // OS에 따른 차이 Window => "\", Mac => "/"
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+/* Image, Video, File => multipart/form-data */
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(
   session({

@@ -1,9 +1,49 @@
 const express = require("express");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
+
 const { Post, Image, Comment, User } = require("../models");
 const { isLoggedIn } = require("./middlewares");
 const router = express.Router();
 
-router.post("/", isLoggedIn, async (req, res, next) => {
+try {
+  fs.accessSync("uploads");
+} catch (error) {
+  console.log("uploads 폴더 생성합니다.");
+  fs.mkdirSync("uploads");
+}
+
+const upload = multer({
+  storage: multer.diskStorage({
+    destination(req, file, done) {
+      done(null, "uploads");
+    },
+    filename(req, file, done) {
+      // ex) 킴재쿤.png
+      /* 파일명이 중복 될 경우 node는 앞에 파일을 엎어쓰기에 처리하는 과정 */
+      const ext = path.extname(file.originalname); // 확장자 추출(png)
+      const basename = path.basename(file.originalname, ext); // 파일명 추출(킴재쿤)
+      done(null, basename + "_" + new Date().getTime() + ext); // 킴재쿤15184712891.png
+    },
+  }),
+  limits: { fileSize: 20 * 1024 * 1024 }, // 20MB
+});
+
+/* 
+  - none : text, json
+  - single : 한 개의 파일
+  - array : 여러 개의 파일
+  - fields : File Input이 여러 개 일 경우
+*/
+
+/* 
+  # multer key
+  File => req.(file, files)
+  text => req.body
+*/
+
+router.post("/", isLoggedIn, upload.none(), async (req, res, next) => {
   try {
     const { content } = req.body;
 
@@ -11,6 +51,20 @@ router.post("/", isLoggedIn, async (req, res, next) => {
       content,
       UserId: req.user.id,
     });
+
+    if (req.body.image) {
+      if (Array.isArray(req.body.image)) {
+        // 이미지를 여러 개 올린 경우 image: [킴재쿤.png, 리재쿤,png]
+        const images = await Promise.all(
+          req.body.image.map((image) => Image.create({ src: image }))
+        );
+        await post.addImages(images);
+      } else {
+        // 이미지 하나인 경우 image: 킴재쿤.png
+        const image = await Image.create({ src: req.body.image });
+        await post.addImages(image);
+      }
+    }
 
     const fullPost = await Post.findOne({
       where: { id: post.id },
@@ -117,5 +171,12 @@ router.delete("/:postId/like", isLoggedIn, async (req, res, next) => {
     next(error);
   }
 });
+
+/* IMAGES UPLOAD */
+router.post("/images", isLoggedIn, upload.array("image"), (req, res, next) => {
+  // 이미지 업로드 후
+  console.log(req.files);
+  res.json(req.files.map((file) => file.filename));
+}); // POST /post/images
 
 module.exports = router;
