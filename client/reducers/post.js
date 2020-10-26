@@ -25,6 +25,9 @@ export const initialState = {
   uploadImageLoading: false,
   uploadImageDone: false,
   uploadImageError: null,
+  retweetLoading: false,
+  retweetDone: false,
+  retweetError: null,
 };
 
 export const LOAD_POSTS_REQUEST = "LOAD_POSTS_REQUEST";
@@ -57,6 +60,10 @@ export const UPLOAD_IMAEGS_FAILURE = "UPLOAD_IMAEGS_FAILURE";
 
 export const REMOVE_IMAGE = "REMOVE_IMAGE";
 
+export const RETWEET_REQUEST = "RETWEET_REQUEST";
+export const RETWEET_SUCCESS = "RETWEET_SUCCESS";
+export const RETWEET_FAILURE = "RETWEET_FAILURE";
+
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
@@ -69,7 +76,7 @@ const reducer = (state = initialState, action) => {
       case LOAD_POSTS_SUCCESS:
         draft.loadPostsLoading = false;
         draft.mainPosts = draft.mainPosts.concat(action.data);
-        draft.hasMorePosts = draft.mainPosts.length < 50;
+        draft.hasMorePosts = draft.mainPosts.length === 10;
         draft.loadPostsDone = true;
         break;
       case LOAD_POSTS_FAILURE:
@@ -199,6 +206,21 @@ const reducer = (state = initialState, action) => {
         break;
       case REMOVE_IMAGE:
         draft.imagePaths = draft.imagePaths.filter((y, i) => i !== action.data);
+        break;
+      /* RETWEET */
+      case RETWEET_REQUEST:
+        draft.retweetLoading = true;
+        draft.retweetDone = false;
+        draft.retweetError = null;
+        break;
+      case RETWEET_SUCCESS:
+        draft.retweetLoading = false;
+        draft.mainPosts.unshift(action.data);
+        draft.retweetDone = true;
+        break;
+      case RETWEET_FAILURE:
+        draft.retweetLoading = false;
+        draft.retweetError = action.error;
         break;
       default:
         break;
