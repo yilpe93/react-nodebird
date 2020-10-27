@@ -7,7 +7,7 @@ const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 
 const router = express.Router();
 
-// 유저 정보
+// 내 정보
 router.get("/", async (req, res, next) => {
   try {
     if (req.user) {
@@ -42,7 +42,51 @@ router.get("/", async (req, res, next) => {
     console.error(error);
     next(error);
   }
-});
+}); // GET /user
+
+// 유저 정보
+router.get("/:userId", async (req, res, next) => {
+  try {
+    const user = await User.findOne({
+      where: { id: parseInt(req.params.userId) },
+      attributes: {
+        exclude: ["password"],
+      },
+      include: [
+        {
+          model: Post,
+          attributes: ["id"],
+        },
+        {
+          model: User,
+          as: "Followings",
+          attributes: ["id"],
+        },
+        {
+          model: User,
+          as: "Followers",
+          attributes: ["id"],
+        },
+      ],
+    });
+
+    if (user) {
+      /* 개인정보 침해 예방 */
+      const data = user.toJSON();
+
+      data.Posts = data.Posts.length;
+      data.Followers = data.Followers.lenght;
+      data.Followings = data.Followings.length;
+
+      res.status(200).json(data);
+    } else {
+      res.status(404).json("존재하지 않는 사용자입니다.");
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+}); // GET /user/1
 
 // 회원가입
 router.post("/", isNotLoggedIn, async (req, res, next) => {

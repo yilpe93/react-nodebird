@@ -25,18 +25,35 @@ import post from "./post";
 */
 
 // (이전 상태, 액션) => 다음 상태
-const rootReducer = combineReducers({
-  index: (state = {}, action) => {
-    switch (action.type) {
-      case HYDRATE:
-        console.log("HYDRATE", HYDRATE);
-        return { ...state, ...action.payload };
-      default:
-        return state;
+// const rootReducer = combineReducers({
+//   index: (state = {}, action) => {
+//     switch (action.type) {
+//       case HYDRATE:
+//         console.log("HYDRATE", HYDRATE);
+//         return { ...state, ...action.payload };
+//       default:
+//         return state;
+//     }
+//   },
+//   user,
+//   post,
+// });
+
+/* ServerSide */
+const rootReducer = (state, action) => {
+  switch (action.type) {
+    case HYDRATE:
+      console.log("HYDRATE", action);
+      return action.payload;
+    default: {
+      const conbinedReducer = combineReducers({
+        user,
+        post,
+      });
+
+      return conbinedReducer(state, action);
     }
-  },
-  user,
-  post,
-});
+  }
+};
 
 export default rootReducer;

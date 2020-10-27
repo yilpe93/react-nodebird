@@ -2,6 +2,9 @@ import { all, call, fork, takeLatest, put, delay } from "redux-saga/effects";
 import axios from "axios";
 
 import {
+  LOAD_MY_INFO_REQUEST,
+  LOAD_MY_INFO_SUCCESS,
+  LOAD_MY_INFO_FAILURE,
   LOAD_USER_REQUEST,
   LOAD_USER_SUCCESS,
   LOAD_USER_FAILURE,
@@ -178,9 +181,31 @@ function* logOut() {
   }
 }
 
-/* LOAD_USER API */
-function loadUserAPI() {
+/* LOAD_MY_INFO API */
+function loadMyInfoAPI() {
   return axios.get("/user");
+}
+
+function* loadMyInfo() {
+  try {
+    const result = yield call(loadMyInfoAPI);
+
+    yield put({
+      type: LOAD_MY_INFO_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LOAD_MY_INFO_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+/* LOAD_USER API */
+function loadUserAPI(data) {
+  return axios.get(`/user/${data}`);
 }
 
 function* loadUser(action) {
@@ -195,7 +220,7 @@ function* loadUser(action) {
     console.error(err);
     yield put({
       type: LOAD_USER_FAILURE,
-      data: err.response.data,
+      error: err.response.data,
     });
   }
 }
@@ -272,6 +297,10 @@ function* watchLogOut() {
   yield takeLatest(LOG_OUT_REQUEST, logOut);
 }
 
+function* watchLoadMyInfo() {
+  yield takeLatest(LOAD_MY_INFO_REQUEST, loadMyInfo);
+}
+
 function* watchLoadUser() {
   yield takeLatest(LOAD_USER_REQUEST, loadUser);
 }
@@ -292,6 +321,7 @@ export default function* userSaga() {
     fork(watchLoadFollowings),
     fork(watchRemoveFollower),
     fork(watchLogIn),
+    fork(watchLoadMyInfo),
     fork(watchLogOut),
     fork(watchLoadUser),
     fork(watchSignUp),
