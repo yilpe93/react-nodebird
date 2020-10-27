@@ -26,11 +26,6 @@ const Home = () => {
     }
   }, [retweetError]);
 
-  // useEffect(() => {
-  //   dispatch({ type: LOAD_MY_INFO_REQUEST });
-  //   dispatch({ type: LOAD_POSTS_REQUEST });
-  // }, []);
-
   useEffect(() => {
     function onScroll() {
       // console.log(

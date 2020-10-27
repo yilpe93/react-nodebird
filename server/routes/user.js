@@ -75,8 +75,8 @@ router.get("/:userId", async (req, res, next) => {
       const data = user.toJSON();
 
       data.Posts = data.Posts.length;
-      data.Followers = data.Followers.lenght;
       data.Followings = data.Followings.length;
+      data.Followers = data.Followers.length;
 
       res.status(200).json(data);
     } else {

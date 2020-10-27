@@ -14,6 +14,59 @@ try {
   fs.mkdirSync("uploads");
 }
 
+router.get("/:postId", async (req, res, next) => {
+  try {
+    const post = await Post.findOne({
+      where: { id: parseInt(req.params.postId) },
+    });
+
+    if (!post) {
+      return res.status(404).send("존재하지 않는 게시글입니다.");
+    }
+
+    const fullPost = await Post.findOne({
+      where: { id: post.id },
+      include: [
+        {
+          model: Post,
+          as: "Retweet",
+          include: [
+            {
+              model: User,
+              attributes: ["id", "nickname"],
+            },
+            {
+              model: Image,
+            },
+          ],
+        },
+        {
+          model: Image,
+        },
+        {
+          model: Comment,
+          include: [
+            {
+              model: User,
+              attributes: ["id", "nickname"],
+            },
+          ],
+        },
+        {
+          model: User,
+          attributes: ["id", "nickname"],
+        },
+        { model: User, attributes: ["id"], as: "Likers" }, // 좋아요 누른 사람
+      ],
+    });
+
+    res.status(201).json(fullPost);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 const upload = multer({
   storage: multer.diskStorage({
     destination(req, file, done) {
@@ -67,8 +120,6 @@ router.post("/", isLoggedIn, upload.none(), async (req, res, next) => {
           })
         )
       ); // [[노드, true], [리액트,true]]
-
-      console.log("result", result);
 
       await post.addHashtags(result.map((tag) => tag[0]));
     }
@@ -217,7 +268,6 @@ router.post("/images", isLoggedIn, upload.array("image"), (req, res, next) => {
   }
 
   // 이미지 업로드 후
-  console.log(req.files);
   res.json(req.files.map((file) => file.filename));
 }); // POST /post/images
 
