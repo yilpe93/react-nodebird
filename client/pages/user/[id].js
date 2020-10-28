@@ -29,9 +29,8 @@ const User = () => {
   useEffect(() => {
     if (loadPostsError) {
       alert(loadPostsError);
+      Router.replace("/");
     }
-
-    Router.replace("/");
   }, [loadPostsError]);
 
   useEffect(() => {
