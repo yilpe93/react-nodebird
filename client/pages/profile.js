@@ -1,23 +1,21 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Head from "next/head";
 import Router from "next/router";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  LOAD_FOLLOWERS_REQUEST,
-  LOAD_FOLLOWINGS_REQUEST,
-} from "../reducers/user";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import useSWR from "swr";
+
+import { LOAD_MY_INFO_REQUEST } from "../reducers/user";
+import wrapper from "../store/configureStore";
+
 import AppLayout from "../components/AppLayout";
 import InfoEditForm from "../components/InfoEditForm";
 import FollowList from "../components/FollowList";
-
-import axios from "axios";
-import useSWR from "swr";
 
 const fetcher = (url) =>
   axios.get(url, { withCredentials: true }).then((result) => result.data);
 
 const Profile = () => {
-  // const dispatch = useDispatch();
   const { me } = useSelector((state) => state.user);
 
   const [followersLimit, setFollowersLimit] = useState(3);
@@ -67,17 +65,35 @@ const Profile = () => {
           header="팔로잉 목록"
           onClickMore={loadMoreFollowings}
           data={followingsData}
-          loading={!followersData && !followerError}
+          loading={!followingsData && !followingError}
         />
         <FollowList
           header="팔로워 목록"
           onClickMore={loadMoreFollowers}
           data={followersData}
-          loading={!followingsData && !followingError}
+          loading={!followersData && !followerError}
         />
       </AppLayout>
     </>
   );
 };
+
+export const getServerSideProps = wrapper.getServerSideProps(
+  async (context) => {
+    const cookie = context.req ? context.req.headers.cookie : "";
+    axios.defaults.headers.Cookie = "";
+
+    if (context.req && cookie) {
+      axios.defaults.headers.Cookie = cookie;
+    }
+
+    context.store.dispatch({
+      type: LOAD_MY_INFO_REQUEST,
+    });
+
+    context.store.dispatch(END);
+    await context.store.sagaTask.toPromise();
+  }
+);
 
 export default Profile;
