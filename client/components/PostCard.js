@@ -2,6 +2,8 @@ import React, { useCallback, useState, useEffect } from "react";
 import Link from "next/link";
 import PropTypes from "prop-types";
 import styled, { createGlobalStyle } from "styled-components";
+import moment from "moment";
+
 import { useDispatch, useSelector } from "react-redux";
 import { Card, Popover, Button, Avatar, List, Comment } from "antd";
 import {
@@ -33,6 +35,8 @@ const Global = createGlobalStyle`
     transform: initial;
   }
 `;
+
+moment.locale("ko");
 
 const PostCard = ({ post }) => {
   const dispatch = useDispatch();
@@ -149,6 +153,9 @@ const PostCard = ({ post }) => {
               )
             }
           >
+            <div style={{ float: "right" }}>
+              {moment(post.createdAt).format("YYYY.MM.DD")}
+            </div>
             <Card.Meta
               avatar={
                 <Link href={`/user/${post.Retweet.User.id}`}>
@@ -162,17 +169,22 @@ const PostCard = ({ post }) => {
             />
           </Card>
         ) : (
-          <Card.Meta
-            avatar={
-              <Link href={`/user/${post.User.id}`}>
-                <a>
-                  <Avatar>{post.User.nickname[0]}</Avatar>
-                </a>
-              </Link>
-            }
-            title={post.User.nickname}
-            description={<PostCardContent postData={post.content} />}
-          />
+          <>
+            <div style={{ float: "right" }}>
+              {moment(post.createdAt).format("YYYY.MM.DD")}
+            </div>
+            <Card.Meta
+              avatar={
+                <Link href={`/user/${post.User.id}`}>
+                  <a>
+                    <Avatar>{post.User.nickname[0]}</Avatar>
+                  </a>
+                </Link>
+              }
+              title={post.User.nickname}
+              description={<PostCardContent postData={post.content} />}
+            />
+          </>
         )}
       </Card>
       {commentFormOpened && (
@@ -215,7 +227,9 @@ PostCard.propTypes = {
     createdAt: PropTypes.string,
     Comments: PropTypes.arrayOf(PropTypes.object),
     Images: PropTypes.arrayOf(PropTypes.object),
-    Retwwet: PropTypes.objectOf(PropTypes.any),
+    Likers: PropTypes.arrayOf(PropTypes.object),
+    RetweetId: PropTypes.number,
+    Retweet: PropTypes.objectOf(PropTypes.any),
   }).isRequired,
 };
 

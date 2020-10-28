@@ -43,11 +43,6 @@ const AppLayout = ({ children }) => {
             onSearch={onSearch}
           />
         </Menu.Item>
-        <Menu.Item>
-          <Link href="/signup">
-            <a>회원가입</a>
-          </Link>
-        </Menu.Item>
       </Menu>
 
       {/* gutter => column 사이의 간격 조절 */}
