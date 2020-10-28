@@ -45,50 +45,6 @@ router.get("/", async (req, res, next) => {
   }
 }); // GET /user
 
-// 유저 정보
-router.get("/:userId", async (req, res, next) => {
-  try {
-    const user = await User.findOne({
-      where: { id: parseInt(req.params.userId) },
-      attributes: {
-        exclude: ["password"],
-      },
-      include: [
-        {
-          model: Post,
-          attributes: ["id"],
-        },
-        {
-          model: User,
-          as: "Followings",
-          attributes: ["id"],
-        },
-        {
-          model: User,
-          as: "Followers",
-          attributes: ["id"],
-        },
-      ],
-    });
-
-    if (user) {
-      /* 개인정보 침해 예방 */
-      const data = user.toJSON();
-
-      data.Posts = data.Posts.length;
-      data.Followings = data.Followings.length;
-      data.Followers = data.Followers.length;
-
-      res.status(200).json(data);
-    } else {
-      res.status(404).json("존재하지 않는 사용자입니다.");
-    }
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-}); // GET /user/1
-
 // 회원가입
 router.post("/", isNotLoggedIn, async (req, res, next) => {
   try {
@@ -218,7 +174,9 @@ router.patch("/info", isLoggedIn, async (req, res, next) => {
 router.get("/followers", isLoggedIn, async (req, res, next) => {
   try {
     const user = await User.findOne({ where: { id: req.user.id } });
-    const followers = await user.getFollowers();
+    const followers = await user.getFollowers({
+      limit: parseInt(req.query.limit),
+    });
     res.status(200).json(followers);
   } catch (error) {
     console.error(error);
@@ -229,13 +187,59 @@ router.get("/followers", isLoggedIn, async (req, res, next) => {
 router.get("/followings", isLoggedIn, async (req, res, next) => {
   try {
     const user = await User.findOne({ where: { id: req.user.id } });
-    const followings = await user.getFollowings();
+    const followings = await user.getFollowings({
+      limit: parseInt(req.query.limit),
+    });
     res.status(200).json(followings);
   } catch (error) {
     console.error(error);
     next(error);
   }
 }); // GET /user/followings
+
+// 유저 정보
+router.get("/:userId", async (req, res, next) => {
+  try {
+    const user = await User.findOne({
+      where: { id: parseInt(req.params.userId) },
+      attributes: {
+        exclude: ["password"],
+      },
+      include: [
+        {
+          model: Post,
+          attributes: ["id"],
+        },
+        {
+          model: User,
+          as: "Followings",
+          attributes: ["id"],
+        },
+        {
+          model: User,
+          as: "Followers",
+          attributes: ["id"],
+        },
+      ],
+    });
+
+    if (user) {
+      /* 개인정보 침해 예방 */
+      const data = user.toJSON();
+
+      data.Posts = data.Posts.length;
+      data.Followings = data.Followings.length;
+      data.Followers = data.Followers.length;
+
+      res.status(200).json(data);
+    } else {
+      res.status(404).json("존재하지 않는 사용자입니다.");
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+}); // GET /user/1
 
 router.patch("/:userId/follow", isLoggedIn, async (req, res, next) => {
   try {

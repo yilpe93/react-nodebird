@@ -68,7 +68,18 @@ const Home = () => {
 
   # next9
   - getStaticPorps => 언제 접속해도 데이터가 변경되지 않을 때 사용;
-  - getStaticPath;
+  - getStaticPath => 동적 라이팅에서 getStaticProps를 사용할 때 getStaticPath를 사용해줘야 한다.;
+    ```
+    export async function getStaticPath() {
+      return {
+        paths: [
+          {params: { id: "1" }}
+        ],
+        fallback: false
+      }
+    }
+    ```
+
   - getServersidePorps => 접속할때마다 데이터가 변경된다면 사용;
 */
 
