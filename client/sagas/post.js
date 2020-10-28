@@ -9,6 +9,12 @@ import {
 } from "redux-saga/effects";
 import axios from "axios";
 import {
+  LOAD_HASHTAG_POSTS_REQUEST,
+  LOAD_HASHTAG_POSTS_SUCCESS,
+  LOAD_HASHTAG_POSTS_FAILURE,
+  LOAD_USER_POSTS_REQUEST,
+  LOAD_USER_POSTS_SUCCESS,
+  LOAD_USER_POSTS_FAILURE,
   LOAD_POSTS_REQUEST,
   LOAD_POSTS_SUCCESS,
   LOAD_POSTS_FAILURE,
@@ -39,6 +45,52 @@ import {
 } from "../reducers/post";
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
 
+/* LOAD HASHTAG POSTS API */
+function loadHashtagPostsAPI(data, lastId) {
+  return axios.get(
+    `/hashtag/${encodeURIComponent(data)}?lastId=${lastId || 0}`
+  );
+}
+
+function* loadHashtagPosts(action) {
+  try {
+    const result = yield call(loadHashtagPostsAPI, action.data, action.lastId);
+
+    yield put({
+      type: LOAD_HASHTAG_POSTS_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LOAD_HASHTAG_POSTS_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+/* LOAD USER POSTS API */
+function loadUserPostsAPI(data, lastId) {
+  return axios.get(`/user/${data}/posts?lastId=${lastId || 0}`);
+}
+
+function* loadUserPosts(action) {
+  try {
+    const result = yield call(loadUserPostsAPI, action.data, action.lastId);
+
+    yield put({
+      type: LOAD_USER_POSTS_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LOAD_USER_POSTS_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 /* LOAD POSTS API */
 function loadPostsAPI(lastId) {
   return axios.get(`/posts?lastId=${lastId || 0}`);
@@ -46,7 +98,7 @@ function loadPostsAPI(lastId) {
 
 function* loadPosts(action) {
   try {
-    const result = yield call(loadPostsAPI, action.data);
+    const result = yield call(loadPostsAPI, action.lastId);
 
     yield put({
       type: LOAD_POSTS_SUCCESS,
@@ -90,7 +142,6 @@ function addPostAPI(data) {
 
 function* addPost(action) {
   try {
-    console.log("action", action);
     const result = yield call(addPostAPI, action.data);
 
     yield put({
@@ -247,6 +298,14 @@ function* retweet(action) {
   }
 }
 
+function* watchLoadHashtagPosts() {
+  yield throttle(5000, LOAD_HASHTAG_POSTS_REQUEST, loadHashtagPosts);
+}
+
+function* watchLoadUserPosts() {
+  yield throttle(5000, LOAD_USER_POSTS_REQUEST, loadUserPosts);
+}
+
 function* watchLoadPosts() {
   yield throttle(5000, LOAD_POSTS_REQUEST, loadPosts);
 }
@@ -285,6 +344,8 @@ function* watchRetweet() {
 
 export default function* postSaga() {
   yield all([
+    fork(watchLoadHashtagPosts),
+    fork(watchLoadUserPosts),
     fork(watchLoadPosts),
     fork(watchLoadPost),
     fork(watchAddPost),

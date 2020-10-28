@@ -10,6 +10,7 @@ const path = require("path");
 const userRouter = require("./routes/user");
 const postRouter = require("./routes/post");
 const postsRouter = require("./routes/posts");
+const hashtagRouter = require("./routes/hashtag");
 
 const db = require("./models");
 
@@ -53,6 +54,7 @@ app.use(passport.session());
 app.use("/api/user", userRouter);
 app.use("/api/post", postRouter);
 app.use("/api/posts", postsRouter);
+app.use("/api/hashtag", hashtagRouter);
 
 /* 
   # Error 처리 middleware

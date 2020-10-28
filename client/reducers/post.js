@@ -34,6 +34,14 @@ export const initialState = {
   retweetError: null,
 };
 
+export const LOAD_HASHTAG_POSTS_REQUEST = "LOAD_HASHTAG_POSTS_REQUEST";
+export const LOAD_HASHTAG_POSTS_SUCCESS = "LOAD_HASHTAG_POSTS_SUCCESS";
+export const LOAD_HASHTAG_POSTS_FAILURE = "LOAD_HASHTAG_POSTS_FAILURE";
+
+export const LOAD_USER_POSTS_REQUEST = "LOAD_USER_POSTS_REQUEST";
+export const LOAD_USER_POSTS_SUCCESS = "LOAD_USER_POSTS_SUCCESS";
+export const LOAD_USER_POSTS_FAILURE = "LOAD_USER_POSTS_FAILURE";
+
 export const LOAD_POSTS_REQUEST = "LOAD_POSTS_REQUEST";
 export const LOAD_POSTS_SUCCESS = "LOAD_POSTS_SUCCESS";
 export const LOAD_POSTS_FAILURE = "LOAD_POSTS_FAILURE";
@@ -75,6 +83,38 @@ export const RETWEET_FAILURE = "RETWEET_FAILURE";
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
+      /* LOAD HASHTAG POSTS */
+      case LOAD_HASHTAG_POSTS_REQUEST:
+        draft.loadPostsLoading = true;
+        draft.loadpostsDone = false;
+        draft.loadPostsError = null;
+        break;
+      case LOAD_HASHTAG_POSTS_SUCCESS:
+        draft.loadPostsLoading = false;
+        draft.loadPostsDone = true;
+        draft.mainPosts = draft.mainPosts.concat(action.data);
+        draft.hasMorePosts = action.data.length === 10;
+        break;
+      case LOAD_HASHTAG_POSTS_FAILURE:
+        draft.loadPostsLoading = false;
+        draft.loadPostsError = action.error;
+        break;
+      /* LOAD USER POSTS */
+      case LOAD_USER_POSTS_REQUEST:
+        draft.loadPostsLoading = true;
+        draft.loadpostsDone = false;
+        draft.loadPostsError = null;
+        break;
+      case LOAD_USER_POSTS_SUCCESS:
+        draft.loadPostsLoading = false;
+        draft.loadPostsDone = true;
+        draft.mainPosts = draft.mainPosts.concat(action.data);
+        draft.hasMorePosts = action.data.length === 10;
+        break;
+      case LOAD_USER_POSTS_FAILURE:
+        draft.loadPostsLoading = false;
+        draft.loadPostsError = action.error;
+        break;
       /* LOAD POSTS */
       case LOAD_POSTS_REQUEST:
         draft.loadPostsLoading = true;

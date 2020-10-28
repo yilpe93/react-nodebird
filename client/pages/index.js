@@ -40,7 +40,7 @@ const Home = () => {
       ) {
         if (hasMorePosts && !loadPostsLoading) {
           const lastId = mainPosts[mainPosts.length - 1]?.id;
-          dispatch({ type: LOAD_POSTS_REQUEST, data: lastId });
+          dispatch({ type: LOAD_POSTS_REQUEST, lastId });
         }
       }
     }
