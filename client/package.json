@@ -5,16 +5,19 @@
   "main": "index.js",
   "scripts": {
     "dev": "next",
-    "build": "next build"
+    "build": "cross-env ANALYZE=true NODE_ENV=production next build",
+    "start": "cross-env NODE_ENV=production next start -p 3060"
   },
   "keywords": [],
   "author": "Jkun",
   "license": "ISC",
   "dependencies": {
     "@ant-design/icons": "^4.2.2",
+    "@next/bundle-analyzer": "^10.0.0",
     "antd": "^4.6.5",
     "axios": "^0.20.0",
     "babel-plugin-styled-components": "^1.11.1",
+    "cross-env": "^7.0.2",
     "faker": "^5.1.0",
     "immer": "^7.0.9",
     "moment": "^2.29.1",
