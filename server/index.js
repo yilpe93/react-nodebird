@@ -70,7 +70,7 @@ app.use("/api/hashtag", hashtagRouter);
   app.use((err, req, res, next) => {});
 */
 
-app.listen(3065, () => {
+app.listen(80, () => {
   console.log("서버 실행 중");
 });
 
