@@ -40,7 +40,7 @@ if (process.env.NODE_ENV === "production") {
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "nodebird.com"],
+    origin: ["http://localhost:3000", "nodebird.com", "http://52.78.213.147"],
     credentials: true, // cookie 전달
   })
 );
