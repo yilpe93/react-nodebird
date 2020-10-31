@@ -31,7 +31,7 @@ db.sequelize
 passportConfig();
 
 if (process.env.NODE_ENV === "production") {
-  app.use(mogran("combined"));
+  app.use(morgan("combined"));
   app.use(hpp());
   app.use(helmet());
 } else {
