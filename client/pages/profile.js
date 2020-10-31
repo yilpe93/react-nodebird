@@ -7,6 +7,7 @@ import useSWR from "swr";
 
 import { LOAD_MY_INFO_REQUEST } from "../reducers/user";
 import wrapper from "../store/configureStore";
+import { backUrl } from "../config/config";
 
 import AppLayout from "../components/AppLayout";
 import InfoEditForm from "../components/InfoEditForm";
@@ -22,11 +23,11 @@ const Profile = () => {
   const [followingsLimit, setFollowingsLimit] = useState(3);
 
   const { data: followersData, error: followerError } = useSWR(
-    `http://localhost:3065/api/user/followers?limit=${followersLimit}`,
+    `${backUrl}/api/user/followers?limit=${followersLimit}`,
     fetcher
   );
   const { data: followingsData, error: followingError } = useSWR(
-    `http://localhost:3065/api/user/followings?limit=${followingsLimit}`,
+    `${backUrl}/api/user/followings?limit=${followingsLimit}`,
     fetcher
   );
 

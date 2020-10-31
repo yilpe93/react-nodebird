@@ -3,9 +3,10 @@ import axios from "axios";
 // delay, debounce, throttle, takeLatest, takeEvery, takeLeading, takeMaybe ...
 import userSaga from "./user";
 import postSaga from "./post";
+import { backUrl } from "../config/config";
 
 // cors
-axios.defaults.baseURL = "http://localhost:3065/api";
+axios.defaults.baseURL = `${backUrl}/api`;
 axios.defaults.withCredentials = true; // cookie 전달 허용
 
 /* 
